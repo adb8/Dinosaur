@@ -26,8 +26,6 @@ MILLISECONDS_PER_FRAME = 12
 JUMP_INCREMENT = 5
 
 score = 0
-ascent = False
-descent = False
 running = True
 cacti = []
 
@@ -43,48 +41,49 @@ class Player:
     def __init__(self):
         self.x = 200
         self.y = RESTING_POSITION_Y
-        self.square = canvas.create_rectangle(self.x, self.y, self.x+BOX_HEIGHT, self.y+BOX_HEIGHT, fill="red", tag="player", outline="")
+        self.square = canvas.create_rectangle(self.x, self.y, self.x+BOX_HEIGHT, self.y+BOX_HEIGHT,
+                                               fill="red", tag="player", outline="")
 
 class Cactus:
 
     def __init__(self):
         self.x = CANVAS_WIDTH
         self.y = RESTING_POSITION_Y
-        self.square = canvas.create_rectangle(self.x, self.y, self.x+BOX_HEIGHT, self.y+BOX_HEIGHT, tag="cactus", fill="green", outline="")
+        self.square = canvas.create_rectangle(self.x, self.y, self.x+BOX_HEIGHT, self.y+BOX_HEIGHT, 
+                                              tag="cactus", fill="green", outline="")
 
 player = Player()
 
+acceleration = 0.25
+velocity = 0
+
 def space():
-    global ascent, descent
-    if descent == False:
-        ascent = True
+    if player.y == RESTING_POSITION_Y:
+        global velocity
+        velocity += 8
 
 window.bind("<space>", lambda event: space())
 
 def handleJump():
 
-    global ascent, descent, cacti
-    if ascent:
-        player.y -= JUMP_INCREMENT
-        if player.y == MAX_POSITION_Y:
-            descent = True
-            ascent = False
-
-    elif descent:
-        player.y += JUMP_INCREMENT
-        if player.y == RESTING_POSITION_Y:
-            descent = False
-            ascent = False
+    global velocity, acceleration
+    player.y -= velocity
+    
+    if player.y != RESTING_POSITION_Y:
+        velocity -= acceleration
+    else:
+        velocity = 0
 
     canvas.delete("player")
-    player.square = canvas.create_rectangle(player.x, player.y, player.x+BOX_HEIGHT, player.y+BOX_HEIGHT, tag="player", fill="red", outline="")
+    player.square = canvas.create_rectangle(player.x, player.y, player.x+BOX_HEIGHT, player.y+BOX_HEIGHT, 
+                                            tag="player", fill="red", outline="")
 
 def spawnCacti():
 
     global cacti
     spawnChance = random.randint(0, 200)
-    if spawnChance <= 3:
 
+    if spawnChance <= 3:
         if len(cacti) == 0:
             cactus = Cactus()
             cacti.append(cactus)
@@ -98,7 +97,8 @@ def drawCacti():
     for i in cacti:
         i.x -= 5
         canvas.delete(i.square)
-        i.square = canvas.create_rectangle(i.x, i.y, i.x+BOX_HEIGHT, i.y+BOX_HEIGHT, tag="cactus", fill="green", outline="")
+        i.square = canvas.create_rectangle(i.x, i.y, i.x+BOX_HEIGHT, i.y+BOX_HEIGHT, tag="cactus",
+                                            fill="green", outline="")
 
 def deleteCacti():
 
@@ -111,7 +111,6 @@ def deleteCacti():
             cacti.append(i)
         else:
             canvas.delete(i.square)
-    tempCacti = []
 
 def updateScore():
 
@@ -138,7 +137,8 @@ def gameOver():
 def displayGameOver():
 
     canvas.delete(ALL)
-    canvas.create_text(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, text="game over", fill="red", font=("consolas", 70))
+    canvas.create_text(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, text="game over", 
+                       fill="red", font=("consolas", 70))
     canvas.configure(bg="black")
 
 def nextFrame():
