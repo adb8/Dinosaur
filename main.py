@@ -14,7 +14,6 @@ SCREEN_WIDTH = window.winfo_screenwidth()
 
 x = int((SCREEN_WIDTH/2) - (WINDOW_WIDTH)/2)
 y = int((SCREEN_HEIGHT/2) - (WINDOW_HEIGHT/2))
-
 window.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{x}+{y}")
 
 BOX_HEIGHT = 50
@@ -37,7 +36,6 @@ canvas.pack()
 canvas.create_rectangle(0, 300, CANVAS_WIDTH, CANVAS_HEIGHT, fill="black", outline="")
 
 class Player:
-
     def __init__(self):
         self.x = 200
         self.y = RESTING_POSITION_Y
@@ -45,7 +43,6 @@ class Player:
                                                fill="red", tag="player", outline="")
 
 class Cactus:
-
     def __init__(self):
         self.x = CANVAS_WIDTH
         self.y = RESTING_POSITION_Y
@@ -53,7 +50,6 @@ class Cactus:
                                               tag="cactus", fill="green", outline="")
 
 player = Player()
-
 acceleration = 0.25
 velocity = 0
 
@@ -61,28 +57,22 @@ def space():
     if player.y == RESTING_POSITION_Y:
         global velocity
         velocity += 8
-
 window.bind("<space>", lambda event: space())
 
 def handleJump():
-
     global velocity, acceleration
     player.y -= velocity
-    
     if player.y != RESTING_POSITION_Y:
         velocity -= acceleration
     else:
         velocity = 0
-
     canvas.delete("player")
     player.square = canvas.create_rectangle(player.x, player.y, player.x+BOX_HEIGHT, player.y+BOX_HEIGHT, 
                                             tag="player", fill="red", outline="")
 
 def spawnCacti():
-
     global cacti
     spawnChance = random.randint(0, 200)
-
     if spawnChance <= 3:
         if len(cacti) == 0:
             cactus = Cactus()
@@ -92,7 +82,6 @@ def spawnCacti():
             cacti.append(cactus)
 
 def drawCacti():
-
     global cacti
     for i in cacti:
         i.x -= 5
@@ -101,11 +90,9 @@ def drawCacti():
                                             fill="green", outline="")
 
 def deleteCacti():
-
     global cacti
     tempCacti = cacti
     cacti = []
-
     for i in tempCacti:
         if i.x > -100:
             cacti.append(i)
@@ -113,7 +100,6 @@ def deleteCacti():
             canvas.delete(i.square)
 
 def updateScore():
-
     global score, cacti
     for i in cacti:
         if i.x == 150:
@@ -121,7 +107,6 @@ def updateScore():
             label.configure(text="Score: "+str(score))
 
 def handleCollions():
-
     global cacti, player
     for i in cacti:
         if player.y > 200:
@@ -135,14 +120,12 @@ def gameOver():
     running = False
 
 def displayGameOver():
-
     canvas.delete(ALL)
     canvas.create_text(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, text="game over", 
                        fill="red", font=("consolas", 70))
     canvas.configure(bg="black")
 
 def nextFrame():
-
     handleJump()
     spawnCacti()
     drawCacti()
@@ -156,5 +139,4 @@ def nextFrame():
 
 nextFrame()
 window.after(MILLISECONDS_PER_FRAME, nextFrame)
-
 window.mainloop()
